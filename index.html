@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER-WEATHER // Atmosfera Global</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-default">
+  <!-- TELA INICIAL / INTRO COM EFEITOS -->
+  <div id="intro-screen" class="intro-screen">
+    <div class="intro-grid"></div>
+    <div class="intro-scanline"></div>
+
+    <div class="intro-content">
+      <span class="intro-tag">ORBITAL TELEMETRY LINK // ONLINE</span>
+      <h1 class="intro-title">CYBER-WEATHER</h1>
+      <p id="intro-typing" class="intro-subtitle"></p>
+
+      <div class="intro-actions">
+        <button id="enter-btn" type="button" class="enter-btn">INICIALIZAR SISTEMA</button>
+        <button id="skip-btn" type="button" class="skip-btn">PULAR INTRO</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="weather-effects"></div>
+
+  <main class="hud-container">
+    <header class="hud-header">
+      <div class="logo">
+        <span class="pulse-dot"></span>
+        <h1>CYBER-WEATHER <small>v2.0</small></h1>
+        <button id="reopen-intro-btn" type="button" class="reopen-intro-btn" title="Rever introdução">INTRO</button>
+      </div>
+
+      <div class="search-wrapper">
+        <form id="search-form" class="search-box">
+          <input 
+            type="text" 
+            id="city-input" 
+            placeholder="Digite uma cidade (ex: Cuiabá, Tokyo)..." 
+            autocomplete="off"
+            required
+          />
+          <button type="submit">ESCANEAR</button>
+        </form>
+        <ul id="suggestions-list" class="suggestions-list hidden"></ul>
+      </div>
+    </header>
+
+    <p id="status-msg" class="status-msg">Aguardando coordenadas do satélite...</p>
+
+    <section id="weather-panel" class="weather-panel hidden">
+      <div class="main-card">
+        <div class="location-info">
+          <div class="city-title-row">
+            <img id="country-flag" class="country-flag" src="" alt="Bandeira do país" />
+            <h2 id="city-name">--</h2>
+          </div>
+          <span id="country-name">--</span>
+          <p id="coords-display" class="coords-display">LAT: -- | LON: --</p>
+        </div>
+
+        <div class="temp-display">
+          <span id="temperature">--</span><span class="unit">°C</span>
+        </div>
+
+        <p id="weather-desc" class="weather-desc">--</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">SENSAÇÃO TÉRMICA</span>
+          <strong id="feels-like">-- °C</strong>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">UMIDADE DO AR</span>
+          <strong id="humidity">-- %</strong>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">VELOCIDADE DO VENTO</span>
+          <strong id="wind-speed">-- km/h</strong>
+        </div>
+
+        <div class="metric-card">
+          <span class="metric-label">PERÍODO LOCAL</span>
+          <strong id="day-night">--</strong>
+        </div>
+      </div>
+
+      <div class="hourly-section">
+        <h3 class="section-title">PROJEÇÃO ATMOSFÉRICA // PRÓXIMAS 6 HORAS</h3>
+        <div id="hourly-grid" class="hourly-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
