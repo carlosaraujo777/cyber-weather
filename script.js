@@ -22,11 +22,107 @@ const humidityEl = document.getElementById("humidity");
 const windSpeedEl = document.getElementById("wind-speed");
 const dayNightEl = document.getElementById("day-night");
 const hourlyGridEl = document.getElementById("hourly-grid");
+const landmarkBackdropEl = document.getElementById("landmark-backdrop");
 
 let typingTimer = null;
 const fraseIntro = "Monitoramento atmosférico global em tempo real via satélites Open-Meteo.";
 // ================= WEB AUDIO API (EFEITOS SCI-FI) =================
 let audioCtx = null;
+
+function atualizarLandmarkPais(countryCode) {
+  const code = (countryCode || "").toUpperCase();
+
+  const landmarks = {
+    // 🇧🇷 Cristo Redentor
+    BR: `
+      <svg viewBox="0 0 300 400" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M110 390 L130 290 L170 290 L190 390 Z" fill="currentColor" fill-opacity="0.15"/>
+        <circle cx="150" cy="82" r="14" fill="currentColor" fill-opacity="0.25"/>
+        <path d="M35 125 L130 112 L130 100 L170 100 L170 112 L265 125 L265 138 L175 136 L182 290 L118 290 L125 136 L35 138 Z" fill="currentColor" fill-opacity="0.2"/>
+        <line x1="150" y1="100" x2="150" y2="290" stroke-dasharray="6 4"/>
+      </svg>`,
+
+    // 🇺🇸 Estátua da Liberdade
+    US: `
+      <svg viewBox="0 0 300 420" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="95" y="330" width="110" height="80" fill="currentColor" fill-opacity="0.15"/>
+        <rect x="110" y="290" width="80" height="40" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M122 290 L132 140 L168 140 L178 290 Z" fill="currentColor" fill-opacity="0.22"/>
+        <circle cx="150" cy="118" r="14" fill="currentColor" fill-opacity="0.25"/>
+        <path d="M132 108 L118 92 M140 103 L134 84 M150 101 L150 80 M160 103 L166 84 M168 108 L182 92"/>
+        <path d="M168 148 L205 78 L215 84 L176 165" fill="currentColor" fill-opacity="0.2"/>
+        <path d="M203 74 L217 74 L214 60 L206 60 Z" fill="currentColor"/>
+      </svg>`,
+
+    // 🇫🇷 Torre Eiffel
+    FR: `
+      <svg viewBox="0 0 300 420" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="150" y1="20" x2="150" y2="55"/>
+        <path d="M142 55 L158 55 L168 180 L195 280 L240 400 L202 400 L175 330 L125 330 L98 400 L60 400 L105 280 L132 180 Z" fill="currentColor" fill-opacity="0.18"/>
+        <path d="M118 330 Q150 295 182 330" stroke-width="3"/>
+        <line x1="102" y1="280" x2="198" y2="280" stroke-width="3"/>
+        <line x1="128" y1="180" x2="172" y2="180" stroke-width="3"/>
+      </svg>`,
+
+    // 🇯🇵 Monte Fuji + Portal Torii
+    JP: `
+      <svg viewBox="0 0 360 360" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M20 330 L145 140 L215 140 L340 330 Z" fill="currentColor" fill-opacity="0.14"/>
+        <path d="M145 140 L165 170 L180 155 L195 172 L215 140 Z" fill="currentColor" fill-opacity="0.35"/>
+        <path d="M110 230 L250 230 L244 242 L116 242 Z" fill="currentColor" fill-opacity="0.25"/>
+        <line x1="122" y1="258" x2="238" y2="258" stroke-width="4"/>
+        <line x1="142" y1="242" x2="136" y2="330" stroke-width="5"/>
+        <line x1="218" y1="242" x2="224" y2="330" stroke-width="5"/>
+      </svg>`,
+
+    // 🇬🇧 Big Ben
+    GB: `
+      <svg viewBox="0 0 260 420" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="130,25 104,105 156,105" fill="currentColor" fill-opacity="0.25"/>
+        <rect x="98" y="105" width="64" height="65" fill="currentColor" fill-opacity="0.2"/>
+        <circle cx="130" cy="137" r="22" stroke-width="3"/>
+        <line x1="130" y1="137" x2="130" y2="122"/>
+        <line x1="130" y1="137" x2="142" y2="137"/>
+        <rect x="104" y="170" width="52" height="230" fill="currentColor" fill-opacity="0.16"/>
+        <line x1="120" y1="170" x2="120" y2="400" stroke-dasharray="6 4"/>
+        <line x1="140" y1="170" x2="140" y2="400" stroke-dasharray="6 4"/>
+      </svg>`,
+
+    // 🇮🇹 Coliseu
+    IT: `
+      <svg viewBox="0 0 380 320" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M30 290 L30 130 L190 130 L240 175 L350 175 L350 290 Z" fill="currentColor" fill-opacity="0.18"/>
+        <line x1="30" y1="185" x2="350" y2="185"/>
+        <line x1="30" y1="238" x2="350" y2="238"/>
+        <rect x="55" y="250" width="22" height="40" rx="11"/>
+        <rect x="105" y="250" width="22" height="40" rx="11"/>
+        <rect x="155" y="250" width="22" height="40" rx="11"/>
+        <rect x="205" y="250" width="22" height="40" rx="11"/>
+        <rect x="255" y="250" width="22" height="40" rx="11"/>
+        <rect x="305" y="250" width="22" height="40" rx="11"/>
+      </svg>`,
+
+    // 🇪🇬 Pirâmides de Gizé
+    EG: `
+      <svg viewBox="0 0 380 320" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="145,95 25,290 265,290" fill="currentColor" fill-opacity="0.2"/>
+        <polygon points="255,140 165,290 345,290" fill="currentColor" fill-opacity="0.15"/>
+        <line x1="145" y1="95" x2="175" y2="290" stroke-dasharray="5 5"/>
+      </svg>`
+  };
+
+  // Fallback holográfico global para outros países
+  const globoPadrao = `
+    <svg viewBox="0 0 320 320" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="160" cy="160" r="120" fill="currentColor" fill-opacity="0.08"/>
+      <ellipse cx="160" cy="160" rx="58" ry="120"/>
+      <ellipse cx="160" cy="160" rx="120" ry="48"/>
+      <line x1="40" y1="160" x2="280" y2="160"/>
+      <line x1="160" y1="40" x2="160" y2="280"/>
+    </svg>`;
+
+  landmarkBackdropEl.innerHTML = landmarks[code] || globoPadrao;
+}
 
 function obterAudioContext() {
   if (!audioCtx) {
@@ -196,6 +292,9 @@ function renderizarProximasHoras(hourly, horaAtualIso) {
 }
 
 async function carregarClimaDeLocal(local) {
+    countryFlagEl.src = getFlagUrl(local.country_code);
+    countryFlagEl.alt = `Bandeira ${local.country}`;
+    atualizarLandmarkPais(local.country_code);
   suggestionsList.classList.add("hidden");
   statusMsg.textContent = `Sincronizando telemetria de ${local.name}...`;
   statusMsg.classList.remove("hidden");
